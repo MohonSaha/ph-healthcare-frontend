@@ -12,22 +12,28 @@ import {
 import Image from "next/image";
 import assets from "@/assets";
 import Link from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import PHForms from "@/components/Forms/PHForms";
+import PHInput from "@/components/Forms/PHInput";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
-export type FormValues = {
-  email: string;
-  password: string;
-};
+export const ValidationSchema = z.object({
+  email: z.string().email("Please enter a valid email address!"),
+  password: z.string().min(6, "Must be at least 6 charecters!"),
+});
 
 const LoginPage = () => {
   const router = useRouter();
-  const { register, handleSubmit } = useForm<FormValues>();
+  // error message state that comes from server
+  const [error, setError] = useState("");
 
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const handleLogin = async (values: FieldValues) => {
     try {
       const res = await userLogin(values);
 
@@ -35,6 +41,9 @@ const LoginPage = () => {
         toast.success(res?.message);
         storeUserInfo({ accessToken: res?.data?.accessToken });
         router.push("/");
+      } else {
+        setError(res?.message);
+        // toast.error(res?.message);
       }
     } catch (err: any) {
       console.log(err.message);
@@ -76,27 +85,38 @@ const LoginPage = () => {
             </Box>
           </Stack>
 
+          {error && (
+            <Box>
+              <Typography color="red" fontWeight={700}>
+                {error}
+              </Typography>
+            </Box>
+          )}
+
           <Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <PHForms
+              onSubmit={handleLogin}
+              resolver={zodResolver(ValidationSchema)}
+              defaultValues={{
+                email: "",
+                password: "",
+              }}
+            >
               <Grid container spacing={2} my={1}>
                 <Grid item md={6}>
-                  <TextField
+                  <PHInput
+                    name="email"
                     label="Email"
                     type="email"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("email")}
                   />
                 </Grid>
                 <Grid item md={6}>
-                  <TextField
+                  <PHInput
+                    name="password"
                     label="Password"
                     type="password"
-                    variant="outlined"
-                    size="small"
                     fullWidth={true}
-                    {...register("password")}
                   />
                 </Grid>
               </Grid>
@@ -121,7 +141,7 @@ const LoginPage = () => {
                   Create an account
                 </Link>
               </Typography>
-            </form>
+            </PHForms>
           </Box>
         </Box>
       </Stack>
