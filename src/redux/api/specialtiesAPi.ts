@@ -2,15 +2,17 @@ import { baseApi } from "./baseApi";
 
 const specialtiesAPi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    createSpeciality: build.mutation({
+    createSpecialty: build.mutation({
       query: (data) => ({
         url: "/specialities",
-        method: "post",
-        ContentType: "multipart/form-data",
-        data,
+        method: "POST",
+        contentType: "multipart/form-data",
+        data: data,
       }),
+
+      // invalidatesTags: [tagTypes.specialties],
     }),
   }),
 });
 
-export const { useCreateSpecialityMutation } = specialtiesAPi;
+export const { useCreateSpecialtyMutation } = specialtiesAPi;

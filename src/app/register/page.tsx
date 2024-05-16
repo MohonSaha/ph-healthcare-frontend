@@ -53,9 +53,11 @@ const RegisterPage = () => {
 
   const handleRegister = async (values: FieldValues) => {
     const data = modifyPayload(values);
+    console.log(data);
 
     try {
       const res = await registerPetient(data);
+      console.log(res);
 
       // register user direct login
       if (res?.data?.id) {
