@@ -36,6 +36,7 @@ const LoginPage = () => {
   const handleLogin = async (values: FieldValues) => {
     try {
       const res = await userLogin(values);
+      console.log(res);
 
       if (res?.data?.accessToken) {
         toast.success(res?.message);
@@ -46,7 +47,7 @@ const LoginPage = () => {
         // toast.error(res?.message);
       }
     } catch (err: any) {
-      console.log(err.message);
+      console.error(err.message);
     }
   };
 
