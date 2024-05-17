@@ -1,24 +1,10 @@
-"use client";
-
 import * as React from "react";
-import Button from "@mui/material/Button";
-import { SxProps, styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
-
-export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import { DialogContent, DialogTitle, SxProps } from "@mui/material";
+import { BootstrapDialog } from "./PHModal";
 
 type TModalProps = {
   open: boolean;
@@ -28,7 +14,16 @@ type TModalProps = {
   sx?: SxProps;
 };
 
-export default function PHModal({
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function PHFullScreenModal({
   open = false,
   setOpen,
   title = "",
@@ -42,12 +37,17 @@ export default function PHModal({
   return (
     <React.Fragment>
       <BootstrapDialog
+        fullScreen
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
         sx={{ ...sx }}
+        TransitionComponent={Transition}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        <DialogTitle
+          sx={{ color: "primary.main", background: "#f4f7fe" }}
+          id="customized-dialog-title"
+        >
           {title}
         </DialogTitle>
         <IconButton
@@ -62,7 +62,7 @@ export default function PHModal({
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent dividers>{children}</DialogContent>
+        <DialogContent sx={{ mx: 1 }}>{children}</DialogContent>
       </BootstrapDialog>
     </React.Fragment>
   );
