@@ -28,9 +28,9 @@ const doctorApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.doctor],
     }),
-    deleteSpeciality: build.mutation({
+    deleteDoctor: build.mutation({
       query: (id) => ({
-        url: `/specialities/${id}`,
+        url: `/doctor/soft/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.doctor],
@@ -38,4 +38,8 @@ const doctorApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useCreateDoctorMutation, useGetAllDoctorsQuery } = doctorApi;
+export const {
+  useCreateDoctorMutation,
+  useGetAllDoctorsQuery,
+  useDeleteDoctorMutation,
+} = doctorApi;

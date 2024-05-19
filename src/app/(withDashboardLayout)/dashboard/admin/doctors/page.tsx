@@ -2,23 +2,40 @@
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 import DoctorModal from "./components/DoctorModal";
 import { useState } from "react";
-import { useGetAllDoctorsQuery } from "@/redux/api/doctorApi";
+import {
+  useDeleteDoctorMutation,
+  useGetAllDoctorsQuery,
+} from "@/redux/api/doctorApi";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IDoctor } from "@/types/doctor";
+import { useDebounced } from "@/redux/hooks";
+import { toast } from "sonner";
 
 const DoctorPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { data, isLoading } = useGetAllDoctorsQuery({});
+  const query: Record<string, any> = {};
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const debouncedTerm = useDebounced({ searchQuery: searchTerm, delay: 600 });
+
+  if (!!debouncedTerm) {
+    // add searchTerm query for data searching
+    query["searchTerm"] = searchTerm;
+  }
+
+  const { data, isLoading } = useGetAllDoctorsQuery({ ...query });
+  const [deleteDoctor] = useDeleteDoctorMutation();
   const doctors = data?.doctors;
   const meta = data?.meta;
 
   const handleDelete = async (id: string) => {
+    console.log(id);
     try {
-      // const res = await deleteSpeciality(id).unwrap();
-      // if (res.id) {
-      //   toast.success("Speciality deleted successfully!");
-      // }
+      const res = await deleteDoctor(id).unwrap();
+      if (res.id) {
+        toast.success("Doctor deleted successfully!");
+      }
     } catch (error: any) {
       console.error(error.message);
     }
@@ -57,7 +74,7 @@ const DoctorPage = () => {
         <Button onClick={() => setIsModalOpen(true)}>Create New Doctor</Button>
         <DoctorModal open={isModalOpen} setOpen={setIsModalOpen} />
         <TextField
-          // onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           size="small"
           placeholder="search doctors"
         />
