@@ -22,7 +22,7 @@ const SchedulesPage = () => {
     const updateData = schedules?.map((schedule: ISchedule, index: number) => {
       return {
         sl: index + 1,
-        id: schedule?.id,
+        id: schedule?.scheduleId,
         startDate: dateFormatter(schedule.startDateTime),
         endDate: dateFormatter(schedule.endDateTime),
         startTime: dayjs(schedule?.startDateTime).format("hh:mm a"),
