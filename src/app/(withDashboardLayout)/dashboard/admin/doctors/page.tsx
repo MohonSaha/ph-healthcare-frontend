@@ -8,7 +8,6 @@ import {
 } from "@/redux/api/doctorApi";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IDoctor } from "@/types/doctor";
 import { useDebounced } from "@/redux/hooks";
 import { toast } from "sonner";
 import EditIcon from "@mui/icons-material/Edit";
